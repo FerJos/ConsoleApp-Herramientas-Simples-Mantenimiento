@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Text;
 using System.Diagnostics;
+using System.Text;
 
 void runCMD(string cmdLine, bool runAsRoot)
 {
