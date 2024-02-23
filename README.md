@@ -14,5 +14,12 @@ El objetivo de está aplicación es ejecutar las herramientas de mantenimiento y
 * eventvwr
 * MdSched
 * lusrmgr
+* [mmc](https://learn.microsoft.com/es-mx/troubleshoot/windows-server/system-management-components/what-is-microsoft-management-console)
+* [wmic](https://learn.microsoft.com/es-mx/troubleshoot/windows-server/system-management-components/what-is-microsoft-management-console)
+* [diskmgmt](https://learn.microsoft.com/es-es/windows-server/storage/disk-management/overview-of-disk-management)
+* [diskpart](https://learn.microsoft.com/es-mx/windows-server/administration/windows-commands/diskpart)
+* dxdiag
+* hdwwiz
+* WSReset
 * [ipconfig](https://learn.microsoft.com/es-mx/windows-server/administration/windows-commands/ipconfig)
 * [shutdown](https://learn.microsoft.com/es-mx/windows-server/administration/windows-commands/shutdown)
