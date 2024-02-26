@@ -22,14 +22,19 @@ void runCMD(string cmdLine)
     }
 }
 
-void runAdminCMD(string cmdLine)
+void runAdminCMD(string cmdLine, bool pauseCMD)
 {
     Process proceso = new Process();
     proceso.StartInfo.FileName = "cmd.exe";
     proceso.StartInfo.WorkingDirectory = Environment.GetEnvironmentVariable("SystemRoot") + @"\System32";
-    proceso.StartInfo.Arguments = "/c" + cmdLine + "& pause";
+    proceso.StartInfo.Arguments = "/c" + cmdLine;
     proceso.StartInfo.Verb = "runas";
     proceso.StartInfo.UseShellExecute = true;
+
+    if (pauseCMD)
+    {
+        proceso.StartInfo.Arguments += "& pause";
+    }
 
     try
     {
@@ -60,22 +65,27 @@ string getLetterVolume()
     return userInput;
 }
 
-string getDecision(string question)
+bool userAcceptInput(string question)
 {
-    Console.Write($"{question}" + " (S/N): ");
+    Console.Write(question + " (S/N): ");
 
     string userInput = Console.ReadLine() ?? "";
     userInput = userInput.ToUpper();
-
-    if (userInput != "S" &&  userInput != "N")
+    switch (userInput)
     {
-        return getDecision(question);
+        case "S":
+            return true;
+        case "N":
+            return false;
+        default:
+            return userAcceptInput(question);
     }
-    return userInput;
 }
 
 void runProgram()
 {
+    Console.Beep();
+
     Console.WriteLine("ConsoleAppTITools1 - Herramientas para el mantenimiento y/o reparación.\n");
     Console.WriteLine("!) Documentación de los comandos de Windows.");
     Console.WriteLine("0) Salir del programa.");
@@ -83,7 +93,7 @@ void runProgram()
     Console.WriteLine("2)* CHKDSK - Corregir errores del disco.");
     Console.WriteLine("3)* CHKDSK - Corregir errores del disco, encontrar sectores defectuosos y recupera la información legible.");
     Console.WriteLine("4)* CHKDSK - Desmontar la unidad, corregir errores del disco, encontrar sectores defectuosos y recupera la información legible.");
-    Console.WriteLine("5)* DISM - ScanHealth, CheckHealth, RestoreHealth y startComponentCleanup.");
+    Console.WriteLine("5)* DISM - {/CheckHealth | /ScanHealth | /RestoreHealth}.");
     Console.WriteLine("6) Cleanmgr - Libera espacio en el disco.");
     Console.WriteLine("7) Abrir Protección del sistema.");
     Console.WriteLine("8) Abrir Panel de control.");
@@ -97,9 +107,12 @@ void runProgram()
     Console.WriteLine("16)* DISKPART.");
     Console.WriteLine("17) Herramienta de diagnóstico de DirectX.");
     Console.WriteLine("18)* Asistente para agregar hardware.");
-    Console.WriteLine("19) Windows Store Reset.");
-    Console.WriteLine("20) ipConfig /All");
-    Console.WriteLine("21) Salir del programa y apagar el equipo inmediatamente (Se perderá cualquier trabajo no guardado).");
+    Console.WriteLine("19) Carpetas compartidas.");
+    Console.WriteLine("20)* Herramienta de eliminación de software malintencionado de ©Microsoft Windows.");
+    Console.WriteLine("21) Editor de directivas de grupo local.");
+    Console.WriteLine("22) Windows Store Reset.");
+    Console.WriteLine("23) ipConfig /All");
+    Console.WriteLine("24) Salir del programa y reiniciar el equipo (Se perderá cualquier trabajo no guardado).");
 
     Console.WriteLine("\n   (*) Herramienta que requiere permisos administrativos.");
     Console.Write("Elija una opción: ");
@@ -131,19 +144,17 @@ void runProgram()
             Console.WriteLine("Saliendo del programa...");
             break;
         case "1":
-            userInput = getDecision("¿Desea que el comprobador de recursos intente reparar los archivos con problemas?");
-
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
-            if (userInput == "S")
+            if (userAcceptInput("¿Desea que el comprobador de recursos intente reparar los archivos con problemas?"))
             {
                 Console.WriteLine("# SCANNOW");
-                runAdminCMD("sfc.exe /SCANNOW");
+                runAdminCMD("sfc.exe /SCANNOW", true);
             }
             else
             {
                 Console.WriteLine("# VERIFYONLY");
-                runAdminCMD("sfc.exe /VERIFYONLY");
+                runAdminCMD("sfc.exe /VERIFYONLY", true);
             }
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
@@ -157,7 +168,7 @@ void runProgram()
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
 
-            runAdminCMD("chkdsk.exe " + userInput + ": /f");
+            runAdminCMD("chkdsk.exe " + userInput + ": /f", true);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -170,7 +181,7 @@ void runProgram()
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
 
-            runAdminCMD("chkdsk.exe " + userInput + ": /f /r /b");
+            runAdminCMD("chkdsk.exe " + userInput + ": /f /r /b", true);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -183,7 +194,7 @@ void runProgram()
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
 
-            runAdminCMD("chkdsk.exe " + userInput + ": /f /r /b /x");
+            runAdminCMD("chkdsk.exe " + userInput + ": /f /r /b /x", true);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -194,14 +205,27 @@ void runProgram()
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
 
-            Console.WriteLine("# ScanHealth. Paso 1/4.");
-            runAdminCMD("DISM.exe /Online /Cleanup-Image /ScanHealth");
-            Console.WriteLine("# CheckHealth. Paso 2/4.");
-            runAdminCMD("DISM.exe /Online /Cleanup-Image /CheckHealth");
+            Console.WriteLine("# CheckHealth. Paso 1/4.");
+            runAdminCMD("DISM.exe /Online /Cleanup-Image /CheckHealth", true);
+            Console.WriteLine("# ScanHealth. Paso 2/4.");
+            runAdminCMD("DISM.exe /Online /Cleanup-Image /ScanHealth", true);
             Console.WriteLine("# RestoreHealth. Paso 3/4.");
-            runAdminCMD("DISM.exe /Online /Cleanup-Image /RestoreHealth");
+            if (userAcceptInput("¿Ejecutar '/RestoreHealth' para realizar operaciones de reparación automáticamente? Esta operación puede tardar varios minutos."))
+            {
+                runAdminCMD("DISM.exe /Online /Cleanup-Image /RestoreHealth", true);
+            }
             Console.WriteLine("# startComponentCleanup. Paso 4/4.");
-            runAdminCMD("DISM.exe /Online /Cleanup-Image /startComponentCleanup");
+            if (userAcceptInput("¿Ejecutar '/startComponentCleanup' para limpiar los componentes reemplazados y reducir el tamaño del almacén de componentes?"))
+            {
+                if (userAcceptInput("¿Ejecutar '/ResetBase' para restablecer la base de componentes reemplazados? ADVERTENCIA: Las actualizaciones de Windows instaladas no se pueden desinstalar si ejecuta '/startComponentCleanup' con '/ResetBase'."))
+                {
+                    runAdminCMD("DISM.exe /Online /Cleanup-Image /startComponentCleanup /ResetBase", true);
+                }
+                else
+                {
+                    runAdminCMD("DISM.exe /Online /Cleanup-Image /startComponentCleanup", true);
+                }
+            }
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -275,7 +299,7 @@ void runProgram()
         case "14":
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
-            runAdminCMD("WMIC.exe");
+            runAdminCMD("WMIC.exe", false);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -293,7 +317,7 @@ void runProgram()
         case "16":
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
-            runAdminCMD("diskpart.exe");
+            runAdminCMD("diskpart.exe", false);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -311,7 +335,7 @@ void runProgram()
         case "18":
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
-            runAdminCMD("hdwwiz.exe");
+            runAdminCMD("hdwwiz.exe", false);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -321,13 +345,15 @@ void runProgram()
         case "19":
             Console.WriteLine("Se ha iniciado una nueva ventana. Continúe desde la nueva ventana...");
             Console.WriteLine("No cierre esta ventana.");
-            runCMD("WSReset.exe");
+            runCMD("fsmgmt.msc");
 
             Console.Clear();
             runProgram();
             break;
         case "20":
-            runCMD("ipconfig /all");
+            Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
+            Console.WriteLine("No cierre esta ventana.");
+            runAdminCMD("mrt.exe", false);
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -335,8 +361,32 @@ void runProgram()
             runProgram();
             break;
         case "21":
-            Console.WriteLine("El equipo se apagará en breve...");
-            runCMD("shutdown /f /p");
+            Console.WriteLine("Se ha iniciado una nueva ventana. Continúe desde la nueva ventana...");
+            Console.WriteLine("No cierre esta ventana.");
+            runCMD("gpedit.msc");
+
+            Console.Clear();
+            runProgram();
+            break;
+        case "22":
+            Console.WriteLine("Se ha iniciado una nueva ventana. Continúe desde la nueva ventana...");
+            Console.WriteLine("No cierre esta ventana.");
+            runCMD("WSReset.exe");
+
+            Console.Clear();
+            runProgram();
+            break;
+        case "23":
+            runCMD("ipconfig /all");
+
+            Console.WriteLine("Presione cualquier tecla para continuar...");
+            Console.ReadKey();
+            Console.Clear();
+            runProgram();
+            break;
+        case "24":
+            Console.WriteLine("El equipo se reiniciará dentro de 5 segundos...");
+            runCMD("shutdown /r /f /t 005");
             break;
         default:
             Console.WriteLine("Opción inválida. Ingrese una opción válida.");
@@ -350,4 +400,5 @@ void runProgram()
 }
 
 
+Console.Title = "ConsoleAppTITools1";
 runProgram();
