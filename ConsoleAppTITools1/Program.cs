@@ -43,12 +43,43 @@ void runAdminCMD(string cmdLine)
     }
 }
 
+string getLetterVolume()
+{
+    Console.Write("Escriba la letra de la unidad a la que desea trabajar (sin incluir los dos puntos): ");
+
+    string userInput = Console.ReadLine() ?? "c";
+    if (userInput == " " || userInput.Length != 1)
+    {
+        userInput = "C";
+    }
+    else
+    {
+        userInput = userInput.ToUpper();
+    }
+
+    return userInput;
+}
+
+string getDecision(string question)
+{
+    Console.Write($"{question}" + " (S/N): ");
+
+    string userInput = Console.ReadLine() ?? "";
+    userInput = userInput.ToUpper();
+
+    if (userInput != "S" &&  userInput != "N")
+    {
+        return getDecision(question);
+    }
+    return userInput;
+}
+
 void runProgram()
 {
     Console.WriteLine("ConsoleAppTITools1 - Herramientas para el mantenimiento y/o reparación.\n");
     Console.WriteLine("!) Documentación de los comandos de Windows.");
     Console.WriteLine("0) Salir del programa.");
-    Console.WriteLine("1)* Comprobador de recursos. Comando sfc /SCANNOW.");
+    Console.WriteLine("1)* sfc - Comprobador de recursos.");
     Console.WriteLine("2)* CHKDSK - Corregir errores del disco.");
     Console.WriteLine("3)* CHKDSK - Corregir errores del disco, encontrar sectores defectuosos y recupera la información legible.");
     Console.WriteLine("4)* CHKDSK - Desmontar la unidad, corregir errores del disco, encontrar sectores defectuosos y recupera la información legible.");
@@ -100,9 +131,20 @@ void runProgram()
             Console.WriteLine("Saliendo del programa...");
             break;
         case "1":
+            userInput = getDecision("¿Desea que el comprobador de recursos intente reparar los archivos con problemas?");
+
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
-            runAdminCMD("sfc.exe /SCANNOW");
+            if (userInput == "S")
+            {
+                Console.WriteLine("# SCANNOW");
+                runAdminCMD("sfc.exe /SCANNOW");
+            }
+            else
+            {
+                Console.WriteLine("# VERIFYONLY");
+                runAdminCMD("sfc.exe /VERIFYONLY");
+            }
 
             Console.WriteLine("Presione cualquier tecla para continuar...");
             Console.ReadKey();
@@ -110,16 +152,7 @@ void runProgram()
             runProgram();
             break;
         case "2":
-            Console.Write("Escriba la letra de la unidad para realizar la comprobación (dejar en blanco para seleccionar C automáticamente): ");
-            userInput = Console.ReadLine() ?? "C";
-            if (userInput.Length == 1 && userInput != " ")
-            {
-                userInput = userInput.ToUpper();
-            }
-            else
-            {
-                userInput = "C";
-            }
+            userInput = getLetterVolume();
 
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
@@ -132,16 +165,7 @@ void runProgram()
             runProgram();
             break;
         case "3":
-            Console.Write("Escriba la letra de la unidad para realizar la comprobación (dejar en blanco para seleccionar C automáticamente): ");
-            userInput = Console.ReadLine() ?? "C";
-            if (userInput.Length == 1 && userInput != " ")
-            {
-                userInput = userInput.ToUpper();
-            }
-            else
-            {
-                userInput = "C";
-            }
+            userInput = getLetterVolume();
 
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
@@ -154,16 +178,7 @@ void runProgram()
             runProgram();
             break;
         case "4":
-            Console.Write("Escriba la letra de la unidad para realizar la comprobación (dejar en blanco para seleccionar C automáticamente): ");
-            userInput = Console.ReadLine() ?? "C";
-            if (userInput.Length == 1 && userInput != " ")
-            {
-                userInput = userInput.ToUpper();
-            }
-            else
-            {
-                userInput = "C";
-            }
+            userInput = getLetterVolume();
 
             Console.WriteLine("Esta herramienta requiere permisos elevados. Se abrirá una nueva ventana cuando el UAC otorgue los permisos requeridos.");
             Console.WriteLine("No cierre esta ventana.");
@@ -335,5 +350,4 @@ void runProgram()
 }
 
 
-Console.OutputEncoding = Encoding.UTF8;
 runProgram();
