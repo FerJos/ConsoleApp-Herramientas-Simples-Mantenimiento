@@ -1,9 +1,12 @@
 # ConsoleAppTITools1
 
-Una simple aplicación de consola que ejecuta herramientas del sistema operativo Windows para realizar mantenimiento y/o reparación.
-El objetivo de está aplicación es ejecutar las herramientas de mantenimiento y reparación ahorrando tiempo en escribir los respectivos comandos.
+Una simple aplicación de consola que ejecuta herramientas del sistema operativo Windows para realizar mantenimiento y/o reparación. El objetivo de está aplicación es ejecutar las herramientas de mantenimiento y reparación ahorrando tiempo en escribir los respectivos comandos.
 
 ![image](https://github.com/FerJos/ConsoleApp-Herramientas-Simples-Mantenimiento/assets/38123159/a4de58d1-5fec-48b1-a539-0461f243360f)
+
+> .NET Framework 8.0 - [ConsoleAppTITools1](https://github.com/FerJos/ConsoleApp-Herramientas-Simples-Mantenimiento/blob/master/ConsoleAppTITools1.exe)
+> 
+> .NET Framework 3.5 - [ConsoleAppTITools1 (Windows 7)](https://github.com/FerJos/ConsoleApp-Herramientas-Simples-Mantenimiento/blob/master/ConsoleAppTITools1(Windows%207).exe)
 
 ## Comandos que ejecuta está aplicación
 * [sfc](https://learn.microsoft.com/es-mx/windows-server/administration/windows-commands/sfc)
