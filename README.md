@@ -1,10 +1,11 @@
 # ConsoleAppTITools1
 
+>[!NOTE]
+> Este repositorio ya no está en uso y ha sido reemplazado por el repositorio [ITToolsSupport](https://github.com/FerJos/ITToolsSupport).
+
 Una simple aplicación de consola que ejecuta herramientas del sistema operativo Windows para realizar mantenimiento y/o reparación. El objetivo de está aplicación es ejecutar las herramientas de mantenimiento y reparación ahorrando tiempo en escribir los respectivos comandos.
 
 ![image](https://github.com/FerJos/ConsoleApp-Herramientas-Simples-Mantenimiento/assets/38123159/a4de58d1-5fec-48b1-a539-0461f243360f)
-
-> .NET 8.0 SDK - [ConsoleAppTITools1](https://github.com/FerJos/ConsoleApp-Herramientas-Simples-Mantenimiento/blob/master/ConsoleAppTITools1.exe)
 
 ## Comandos que ejecuta está aplicación
 * [sfc](https://learn.microsoft.com/es-mx/windows-server/administration/windows-commands/sfc)
